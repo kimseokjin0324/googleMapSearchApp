@@ -8,6 +8,8 @@ import androidx.core.view.isVisible
 import fastcampus.aop.part4.googlemapsearchapp.databinding.ActivityMainBinding
 import fastcampus.aop.part4.googlemapsearchapp.model.LocationLatLngEntity
 import fastcampus.aop.part4.googlemapsearchapp.model.SearchResultEntity
+import fastcampus.aop.part4.googlemapsearchapp.response.search.Poi
+import fastcampus.aop.part4.googlemapsearchapp.response.search.Pois
 import fastcampus.aop.part4.googlemapsearchapp.utility.RetrofitUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +40,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         initViews()
         bindViews()
         initData()
-        setData()
     }
 
     private fun intAdapter() {
@@ -61,18 +62,20 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private fun setData() {
-        val dataList = (0..10).map {
+    private fun setData(pois: Pois) {
+        val dataList = pois.poi.map {
             SearchResultEntity(
-                name = "빌딩 $it",
-                fullAddress = "주소 $it",
+                name = it.name?:"빌딩명 없음",
+                fullAddress = makeMainAdress(it),
                 locationLatLng = LocationLatLngEntity(
-                    it.toFloat(), it.toFloat()
+                    it.noorLat,
+                    it.noorLon
                 )
             )
         }
         adapter.setSearchResultList(dataList) {
-            Toast.makeText(this, "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress}", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress} ,위도/경도 : ${it.locationLatLng}"
+                , Toast.LENGTH_SHORT)
                 .show()
         }
     }
@@ -89,13 +92,33 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             Log.d("검색 결과 response", body.toString())
+                            body?.let {searchResponse ->
+                                setData(searchResponse.searchPoiInfo.pois)
+                            }
                         }
                     }
                 }
 
             } catch (e: Exception) {
-                e.stackTrace
+                e.printStackTrace()
+                Toast.makeText(this@MainActivity, "검색하는 과정에서 에러가 발생했습니다. : ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    private fun makeMainAdress(poi: Poi): String =
+        if (poi.secondNo?.trim().isNullOrEmpty()) {
+            (poi.upperAddrName?.trim() ?: "") + " " +
+                    (poi.middleAddrName?.trim() ?: "") + " " +
+                    (poi.lowerAddrName?.trim() ?: "") + " " +
+                    (poi.detailAddrName?.trim() ?: "") + " " +
+                    poi.firstNo?.trim()
+        } else {
+            (poi.upperAddrName?.trim() ?: "") + " " +
+                    (poi.middleAddrName?.trim() ?: "") + " " +
+                    (poi.lowerAddrName?.trim() ?: "") + " " +
+                    (poi.detailAddrName?.trim() ?: "") + " " +
+                    (poi.firstNo?.trim() ?: "") + " " +
+                    poi.secondNo?.trim()
+        }
 }
