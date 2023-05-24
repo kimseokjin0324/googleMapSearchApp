@@ -1,5 +1,6 @@
 package fastcampus.aop.part4.googlemapsearchapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun setData(pois: Pois) {
         val dataList = pois.poi.map {
             SearchResultEntity(
-                name = it.name?:"빌딩명 없음",
+                name = it.name ?: "빌딩명 없음",
                 fullAddress = makeMainAdress(it),
                 locationLatLng = LocationLatLngEntity(
                     it.noorLat,
@@ -74,9 +75,13 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             )
         }
         adapter.setSearchResultList(dataList) {
-            Toast.makeText(this, "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress} ,위도/경도 : ${it.locationLatLng}"
-                , Toast.LENGTH_SHORT)
+            Toast.makeText(
+                this,
+                "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress} ,위도/경도 : ${it.locationLatLng}",
+                Toast.LENGTH_SHORT
+            )
                 .show()
+            startActivity(Intent(this, MapActivity::class.java))
         }
     }
 
@@ -92,7 +97,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             Log.d("검색 결과 response", body.toString())
-                            body?.let {searchResponse ->
+                            body?.let { searchResponse ->
                                 setData(searchResponse.searchPoiInfo.pois)
                             }
                         }
@@ -101,7 +106,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this@MainActivity, "검색하는 과정에서 에러가 발생했습니다. : ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@MainActivity,
+                    "검색하는 과정에서 에러가 발생했습니다. : ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

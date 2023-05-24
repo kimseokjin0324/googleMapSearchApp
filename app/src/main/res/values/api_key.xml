@@ -2,4 +2,5 @@
 <resources>
     <string name="tmap_api_key">
     </string>
+    <string name="google_map">AIzaSyD67g_8LvG7SgZH4gML9ws7BAAfmIbfHVY</string>
 </resources>
