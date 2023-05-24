@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import fastcampus.aop.part4.googlemapsearchapp.MapActivity.Companion.SEARCH_RESULT_EXTRA_KEY
 import fastcampus.aop.part4.googlemapsearchapp.databinding.ActivityMainBinding
 import fastcampus.aop.part4.googlemapsearchapp.model.LocationLatLngEntity
 import fastcampus.aop.part4.googlemapsearchapp.model.SearchResultEntity
@@ -20,7 +21,7 @@ import kotlinx.coroutines.withContext
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity(), CoroutineScope {
+class MainActivity : AppCompatActivity(), CoroutineScope  {
 
     // 코루틴 비동기 프로그래밍
     private lateinit var job: Job
@@ -81,7 +82,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            startActivity(Intent(this, MapActivity::class.java))
+            startActivity(
+                Intent(this, MapActivity::class.java).apply {
+                    putExtra(SEARCH_RESULT_EXTRA_KEY,it)
+                }
+               )
         }
     }
 

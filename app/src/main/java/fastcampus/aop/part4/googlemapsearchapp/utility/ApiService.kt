@@ -2,6 +2,7 @@ package fastcampus.aop.part4.googlemapsearchapp.utility
 
 import fastcampus.aop.part4.googlemapsearchapp.Key
 import fastcampus.aop.part4.googlemapsearchapp.Url
+import fastcampus.aop.part4.googlemapsearchapp.response.address.AddressInfoResponse
 import fastcampus.aop.part4.googlemapsearchapp.response.search.SearchResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -30,14 +31,14 @@ interface ApiService {
         @Query("centerLat") centerLat: String? = null
     ): Response<SearchResponse>
 
-//    @GET(Url.GET_TMAP_REVERSE_GEO_CODE)
-//    suspend fun getReverseGeoCode(
-//        @Header("appKey") appKey: String = Key.TMAP_API,
-//        @Query("version") version: Int = 1,
-//        @Query("callback") callback: String? = null,
-//        @Query("lat") lat: Double,
-//        @Query("lon") lon: Double,
-//        @Query("coordType") coordType: String? = null,
-//        @Query("addressType") addressType: String? = null
-//    ): Response<AddressInfoResponse>
+    @GET(Url.GET_TMAP_REVERSE_GEO_CODE)
+    suspend fun getReverseGeoCode(
+        @Header("appKey") appKey: String = Key.TMAP_API,
+        @Query("version") version: Int = 1,
+        @Query("callback") callback: String? = null,
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("coordType") coordType: String? = null,
+        @Query("addressType") addressType: String? = null
+    ): Response<AddressInfoResponse>
 }
